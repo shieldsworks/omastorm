@@ -25,7 +25,8 @@ client: it displays those textures in the bar popover and full window.
   the antenna turns. Stale data says it is stale.
 - **Every site.** Pan the map and it follows the nearest station, or search by
   id, city, or state.
-- **Timeline.** Up to 60 scans per station, cached locally. Play, step, scrub.
+- **Timeline.** The last two hours of scans per station, up to 60, cached locally.
+  Play, step, scrub.
 - **Three treatments.** Glyphs, Pixels, and Stipple sample the same gate and
   paint the cell differently.
 - **Native.** Colors, font, and spacing come from the active Omarchy theme and
@@ -70,7 +71,17 @@ To list Omastorm in the app launcher:
 bash ~/.config/omarchy/plugins/com.omastorm.radar/scripts/write-desktop-entry.sh
 ```
 
-Update with `omarchy plugin update com.omastorm.radar`.
+Update, then restart the shell so it loads the new files:
+
+```sh
+omarchy plugin update com.omastorm.radar
+omarchy restart shell
+```
+
+Until the restart, the shell keeps running the plugin it loaded at login, old
+engine pin included. Omastorm notices the update on disk and says so in the
+popover and the window; clicking that notice in the popover restarts the
+shell.
 
 ## Use
 
@@ -87,7 +98,8 @@ station as you pan unless you lock it; a locked radar stays put even when
 the camera leaves its coverage, and the lock turns yellow outside the rings.
 A scale bar under the map shows ground distance in your locale (km or mi).
 A station you arrive at fetches its last dozen scans, so there is a loop to
-play within a few seconds; the cache then grows to 60 as new scans arrive.
+play within a few seconds; the cache then grows to 60 as new scans arrive,
+and scans older than two hours drop out.
 The stamp above the timeline is the absolute scan time; the meta line is how
 stale that frame is. LIVE, STALE after ten minutes, UNAVAILABLE or OFFLINE
 when the feed cannot be reached, with cached frames kept.
@@ -144,8 +156,9 @@ Every action name, the key syntax, and what each setting does are in
 
 ## Troubleshooting
 
-If expand or the keybind does nothing after `omarchy plugin update`, the
-shell still has the previous QML types. Restart it:
+If the popover says UPDATED TO … · RESTART THE SHELL, or expand or the
+keybind does nothing after `omarchy plugin update`, the shell still has the
+previous QML types. Click the notice, or restart it yourself:
 
 ```sh
 omarchy restart shell

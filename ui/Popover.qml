@@ -11,8 +11,8 @@ FocusScope {
     readonly property var state: connection.state
     readonly property var scan: state ? state.frame : null
     readonly property var frames: state ? state.timeline : []
-    // Popover is too narrow for the window's fixed 60 empties. One tick per
-    // frame, no gap stubs, pixel-snapped — same language, denser strip.
+    // One tick per frame, no gap stubs, pixel-snapped: the same strip the
+    // window draws, denser.
     readonly property var slots: {
         var result = [];
         for (var j = 0; j < frames.length; j++)
@@ -168,6 +168,17 @@ FocusScope {
                 }
             }
             MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: card.expandRequested() }
+            // An update is on disk but this shell still runs the old plugin;
+            // the click restarts the shell (PluginSession.updatePending).
+            Rectangle {
+                anchors.top: parent.top; anchors.left: parent.left; anchors.margins: 8
+                visible: card.session.updatePending
+                implicitWidth: updated.implicitWidth + 10; implicitHeight: 20
+                color: Qt.alpha(card.theme.background, .92)
+                border.color: card.theme.accent
+                Label { id: updated; anchors.centerIn: parent; font.pixelSize: 10; color: card.theme.accent; text: card.session.updateNotice }
+                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: card.session.restartShell() }
+            }
             Label {
                 anchors.centerIn: parent; width: parent.width - 24; wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
